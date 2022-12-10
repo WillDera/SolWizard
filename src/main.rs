@@ -32,8 +32,13 @@ fn mkdir_cd(project: &str) -> std::io::Result<()> {
     Ok(())
 }
 
+// fn get_dependencies() -> String {
+//     let dependencies = fs::read_to_string("../src/install.txt");
+//     return dependencies.unwrap();
+// }
+
 fn erc20(contract: &str, project: &str) {
-    let path = env::current_dir();
+    // let path = env::current_dir();
 
     mkdir_cd(project).unwrap();
 
@@ -42,7 +47,21 @@ fn erc20(contract: &str, project: &str) {
         .status()
         .expect("node failed to fetch version");
 
-    println!("From the erc20 function: {:?}, {}", path, contract,);
+    Command::new("npm.cmd")
+        .args([
+            "install",
+            "--save-dev",
+            &fs::read_to_string("../src/install.txt").unwrap(),
+        ])
+        .status()
+        .expect("An error occured while installing dependencies");
+
+    // println!(
+    //     "From the erc20 function: {:?}, {}, {:?}",
+    //     path,
+    //     contract,
+    //     dependencies.as_ref()
+    // );
 }
 
 fn erc721() {
