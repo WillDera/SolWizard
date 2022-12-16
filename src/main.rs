@@ -20,10 +20,13 @@ pub const NPM: &'static str = "npm";
 //TODO: Figure out how to dynamically fetch the import routes to openzeppelin contracts eg. import "@openzeppelin/contracts/..."
 
 fn check_for_node() {
-    Command::new(NPM)
-        .arg("hardhat")
-        .status()
-        .expect("node failed to fetch version");
+    println!("Hello from node");
+}
+
+fn change_dir_and_make_file(name: &str, folder: &str) -> std::io::Result<()> {
+    env::set_current_dir(&folder).unwrap();
+    let mut file = File::create(name)?;
+    Ok(())
 }
 
 fn mkdir_cd(project: &str) -> std::io::Result<()> {
@@ -51,7 +54,7 @@ fn install_dependencies() -> std::io::Result<()> {
     Ok(())
 }
 
-fn erc20(contract: &str, project: &str) {
+fn erc20(contract: &str, project: &str, filename: &str) {
     // let path = env::current_dir();
 
     mkdir_cd(project).unwrap();
@@ -61,7 +64,9 @@ fn erc20(contract: &str, project: &str) {
         .status()
         .expect("node failed to fetch version");
 
-    install_dependencies().unwrap();
+    // install_dependencies().unwrap();
+
+    // change_dir_and_make_file()
 
     // println!(
     //     "From the erc20 function: {:?}, {}, {:?}",
@@ -87,16 +92,22 @@ fn main() {
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
-            Arg::with_name("TYPE")
-                .help("Sets the input file to use")
-                .required(true)
-                .index(1),
+            Arg::with_name("type")
+                .short('t')
+                .help("Sets the contract type to create")
+                .takes_value(true),
         )
         .arg(
-            Arg::with_name("PROJECT_NAME")
-                .help("Set the project name")
-                .required(true)
-                .index(2),
+            Arg::with_name("filename")
+                .short('f')
+                .help("Sets the contract filename i.e. <filename>.sol")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("project_name")
+                .short('p')
+                .takes_value(true)
+                .help("Sets the project name"),
         )
         .arg(
             Arg::with_name("config")
@@ -121,16 +132,17 @@ fn main() {
         .get_matches();
 
     // Same as above examples...
-    println!("{} :Hello there", matches.value_of("TYPE").unwrap());
+    println!("{} :Hello there", matches.value_of("type").unwrap());
 
     // match
-    let name = matches.value_of("TYPE").unwrap();
-    let project_name = matches.value_of("PROJECT_NAME").unwrap();
+    let name = matches.value_of("type").unwrap().to_ascii_lowercase();
+    let project_name = matches.value_of("project_name").unwrap();
+    let filename = matches.value_of("filename").unwrap();
 
-    match matches.value_of("TYPE").unwrap() {
+    match matches.value_of("type").unwrap() {
         "node" => check_for_node(),
-        "ERC20" => erc20(name, project_name),
-        "ERC721" => erc721(),
+        "erc20" => erc20(&name, project_name, filename),
+        "erc721" => erc721(),
         "Custom" => custom(),
         _ => println!("Don't be crazy!"),
     }
