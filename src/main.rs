@@ -4,11 +4,13 @@
 // which the most flexible, but also most verbose.
 extern crate clap;
 use clap::{App, Arg, SubCommand};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 use std::process::Command;
 use std::{env, fs};
 
 #[cfg(windows)]
-pub const NPM: &'static str = "npx.cmd";
+pub const NPM: &'static str = "npm.cmd";
 
 #[cfg(not(windows))]
 pub const NPM: &'static str = "npm";
@@ -32,29 +34,34 @@ fn mkdir_cd(project: &str) -> std::io::Result<()> {
     Ok(())
 }
 
-// fn get_dependencies() -> String {
-//     let dependencies = fs::read_to_string("../src/install.txt");
-//     return dependencies.unwrap();
-// }
+fn install_dependencies() -> std::io::Result<()> {
+    let dependencies = File::open("../src/install.txt").unwrap();
+    let reader = BufReader::new(dependencies);
+
+    for line in reader.lines() {
+        let line = line.expect("Failed to read line.");
+
+        Command::new(NPM)
+            .args(["install", "--save-dev"])
+            .arg(line)
+            .status()
+            .expect("An error occured while installing dependency: {line}");
+    }
+
+    Ok(())
+}
 
 fn erc20(contract: &str, project: &str) {
     // let path = env::current_dir();
 
     mkdir_cd(project).unwrap();
 
-    Command::new(NPM)
+    Command::new("npx.cmd")
         .arg("hardhat")
         .status()
         .expect("node failed to fetch version");
 
-    Command::new("npm.cmd")
-        .args([
-            "install",
-            "--save-dev",
-            &fs::read_to_string("../src/install.txt").unwrap(),
-        ])
-        .status()
-        .expect("An error occured while installing dependencies");
+    install_dependencies().unwrap();
 
     // println!(
     //     "From the erc20 function: {:?}, {}, {:?}",
