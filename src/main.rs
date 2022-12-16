@@ -3,17 +3,9 @@
 // This example demonstrates clap's "builder pattern" method of creating arguments
 // which the most flexible, but also most verbose.
 extern crate clap;
-use clap::{App, Arg, SubCommand};
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use clap::{App, Arg};
 use std::process::Command;
-use std::{env, fs};
-
-#[cfg(windows)]
-pub const NPM: &'static str = "npm.cmd";
-
-#[cfg(not(windows))]
-pub const NPM: &'static str = "npm";
+mod helpers;
 
 //TODO: Read/Write to files in contract folder
 //TODO: Add custom code to contract files
@@ -23,48 +15,34 @@ fn check_for_node() {
     println!("Hello from node");
 }
 
-fn change_dir_and_make_file(name: &str, folder: &str) -> std::io::Result<()> {
-    env::set_current_dir(&folder).unwrap();
-    let mut file = File::create(name)?;
-    Ok(())
-}
+// fn install_dependencies() -> std::io::Result<()> {
+//     let dependencies = File::open("../src/install.txt").unwrap();
+//     let reader = BufReader::new(dependencies);
 
-fn mkdir_cd(project: &str) -> std::io::Result<()> {
-    fs::create_dir_all(project)?;
+//     for line in reader.lines() {
+//         let line = line.expect("Failed to read line.");
 
-    env::set_current_dir(&project).unwrap();
+//         Command::new(NPM)
+//             .args(["install", "--save-dev"])
+//             .arg(line)
+//             .status()
+//             .expect("An error occured while installing dependency: {line}");
+//     }
 
-    Ok(())
-}
-
-fn install_dependencies() -> std::io::Result<()> {
-    let dependencies = File::open("../src/install.txt").unwrap();
-    let reader = BufReader::new(dependencies);
-
-    for line in reader.lines() {
-        let line = line.expect("Failed to read line.");
-
-        Command::new(NPM)
-            .args(["install", "--save-dev"])
-            .arg(line)
-            .status()
-            .expect("An error occured while installing dependency: {line}");
-    }
-
-    Ok(())
-}
+//     Ok(())
+// }
 
 fn erc20(contract: &str, project: &str, filename: &str) {
     // let path = env::current_dir();
 
-    mkdir_cd(project).unwrap();
+    helpers::mkdir_cd(project).unwrap();
 
     Command::new("npx.cmd")
         .arg("hardhat")
         .status()
         .expect("node failed to fetch version");
 
-    // install_dependencies().unwrap();
+    helpers::install_dependencies().unwrap();
 
     // change_dir_and_make_file()
 
@@ -118,24 +96,13 @@ fn main() {
                 .help("Sets a custom config file")
                 .takes_value(true),
         )
-        .subcommand(
-            SubCommand::with_name("test")
-                .about("controls testing features")
-                .version("1.3")
-                .author("Someone E. <someone_else@other.com>")
-                .arg(
-                    Arg::with_name("debug")
-                        .short('d')
-                        .help("print debug information verbosely"),
-                ),
-        )
         .get_matches();
 
     // Same as above examples...
     println!("{} :Hello there", matches.value_of("type").unwrap());
 
     // match
-    let name = matches.value_of("type").unwrap().to_ascii_lowercase();
+    let name = matches.value_of("type").unwrap().to_lowercase();
     let project_name = matches.value_of("project_name").unwrap();
     let filename = matches.value_of("filename").unwrap();
 
