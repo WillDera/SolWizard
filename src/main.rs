@@ -2,10 +2,6 @@ extern crate clap;
 use clap::{App, Arg};
 mod contracts;
 
-//TODO: Read/Write to files in contract folder
-//TODO: Add custom code to contract files
-//TODO: Figure out how to dynamically fetch the import routes to openzeppelin contracts eg. import "@openzeppelin/contracts/..."
-
 fn check_for_node() {
     println!("Hello from node");
 }
