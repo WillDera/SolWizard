@@ -10,6 +10,11 @@ pub const NPM: &'static str = "npm.cmd";
 #[cfg(not(windows))]
 pub const NPM: &'static str = "npm";
 
+/*
+* 1. Change current working directory to contracts/
+* 2. Fetch contract snippet from generate_erc20_snippet function
+* 3. Create file with provided filename and write the snippet from 2, into the file.
+*/
 pub fn change_dir_and_make_file(filename: &str) -> std::io::Result<()> {
     env::set_current_dir("contracts").unwrap();
 
@@ -20,6 +25,9 @@ pub fn change_dir_and_make_file(filename: &str) -> std::io::Result<()> {
     Ok(())
 }
 
+/*
+* Creates a new folder for the hardhat project and switch to it as the cwd.
+*/
 pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
     fs::create_dir_all(project)?;
 
@@ -28,6 +36,9 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
     Ok(())
 }
 
+/*
+* Installs all dependencies listed in "install.txt"
+*/
 pub fn install_dependencies() -> std::io::Result<()> {
     let dependencies = File::open("./install.txt").unwrap();
     let reader = BufReader::new(dependencies);

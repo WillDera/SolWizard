@@ -3,6 +3,10 @@ use std::error::Error;
 
 use handlebars::Handlebars;
 
+/**
+* Generate erc20 snippet too be added to custom contract file.
+* Snipppet is a temlpate generated using handlebars
+**/
 pub fn generate_erc20_snippet() -> String {
     let mut handlebars = Handlebars::new();
 
@@ -22,6 +26,7 @@ pub fn generate_erc20_snippet() -> String {
     }
   "#;
 
+    //  register template string and catch errors if any
     handlebars
         .register_template_string("erc20", template)
         .unwrap_or_else(|e| {
@@ -30,5 +35,6 @@ pub fn generate_erc20_snippet() -> String {
                 println!("Source: {}", source);
             }
         });
+    //  render the template without a closing semicolon -> this would return a string to match the function's return type.
     handlebars.render("erc20", &()).unwrap()
 }
