@@ -1,4 +1,5 @@
-use std::fs::File;
+use indicatif::ProgressBar;
+use std::fs::{copy, read_dir, File};
 use std::io::{BufRead, BufReader, Write};
 use std::process::Command;
 use std::{env, fs};
@@ -31,6 +32,7 @@ pub fn change_dir_and_make_file(filename: &str) -> std::io::Result<()> {
 pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
     fs::create_dir_all(project)?;
 
+    copy("./src/contracts/helpers/install.txt", "./Test/install.txt")?;
     env::set_current_dir(&project).unwrap();
 
     Ok(())
@@ -43,6 +45,9 @@ pub fn install_dependencies() -> std::io::Result<()> {
     let dependencies = File::open("./install.txt").unwrap();
     let reader = BufReader::new(dependencies);
 
+    // TODO: Dynamically get the number of packages in the install.txt file and pass it into ProgressBar::new()
+    let bar = ProgressBar::new(5);
+
     // ? Try parallel iterators from rayon here
     for line in reader.lines() {
         let line = line.expect("Failed to read line.");
@@ -52,7 +57,10 @@ pub fn install_dependencies() -> std::io::Result<()> {
             .arg(line)
             .status()
             .expect("An error occured while installing dependency: {line}");
+
+        bar.inc(1);
     }
+    bar.finish();
 
     Ok(())
 }

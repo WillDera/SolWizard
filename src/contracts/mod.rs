@@ -16,7 +16,7 @@ pub fn erc20(contract_type: &str, project_name: &str, filename: &str) {
         .status()
         .expect("node failed to fetch version");
 
-    // helpers::install_dependencies().unwrap();
+    helpers::install_dependencies().unwrap();
 
     helpers::change_dir_and_make_file(filename).unwrap();
 }
