@@ -12,7 +12,7 @@ fn main() {
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
-            Arg::with_name("File count")
+            Arg::with_name("file_count")
                 .short('n')
                 .help("Number of files to be generated")
                 .takes_value(true)
@@ -57,8 +57,8 @@ fn main() {
     let filename = matches.value_of("filename").unwrap();
     let openzeppelin = matches.contains_id("openzeppelin");
 
-    match matches.value_of("type").unwrap() {
-        "node" => check_for_node(),
+    match matches.value_of("file_count").unwrap() {
+        "node" => check_for_node(), // just for testing, remove later
         "single" => contracts::contract(&contract_type, project_name, filename, openzeppelin),
 
         // TODO: multiple should take number of files, filenames and filetypes (contract type) to be generated
