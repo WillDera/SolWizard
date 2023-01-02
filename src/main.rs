@@ -60,7 +60,9 @@ fn main() {
     match matches.value_of("type").unwrap() {
         "node" => check_for_node(),
         "single" => contracts::contract(&contract_type, project_name, filename, openzeppelin),
-        // "multiple" => contracts::erc721(),
+
+        // TODO: multiple should take number of files, filenames and filetypes (contract type) to be generated
+        // "multiple" => contracts::contracts(number_of_files, project_name, filenames, openzeppelin),
         // "Custom" => contracts::custom(),
         _ => println!("Don't be crazy!"),
     }

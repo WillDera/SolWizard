@@ -2,13 +2,14 @@ use std::process::Command;
 mod helpers;
 
 /**
- * Triggers an ERC20 contract creation
- * contract_type: contract type to be created i.e ERC20 (might be redundant)
- * project_name: the project name i.e. DeraDAO
- * filename: the contract file name i.e. DeraDAO.sol
+ * Triggers contract creation
+ * @param contract_type: contract type to be created i.e ERC20 (might be redundant)
+ * @param project_name: the project name i.e. DeraDAO
+ * @param filename: the contract file name i.e. DeraDAO.sol
+ * @param openzeppelin: if openzeppelin imports should be included
  * */
 
-pub fn erc20(contract_type: &str, project_name: &str, filename: &str) {
+pub fn contract(contract_type: &str, project_name: &str, filename: &str, openzeppelin: bool) {
     helpers::mkdir_cd(project_name).unwrap();
 
     Command::new("npx.cmd")
@@ -18,13 +19,14 @@ pub fn erc20(contract_type: &str, project_name: &str, filename: &str) {
 
     helpers::install_dependencies().unwrap();
 
-    helpers::change_dir_and_make_file(filename).unwrap();
+    helpers::change_dir_and_make_file(filename, openzeppelin, contract_type).unwrap();
 }
 
-pub fn erc721() {
-    println!("From the erc721 function");
-}
-
-pub fn custom() {
-    println!("From the custom domain...");
-}
+// pub fn contracts(
+//     number_of_files: &i32,
+//     project_name: &str,
+//     filenames: Vec<&str>,
+//     openzeppelin: bool,
+// ) {
+//     (())
+// }
