@@ -12,6 +12,13 @@ fn main() {
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
+            Arg::with_name("File count")
+                .short('n')
+                .help("Number of files to be generated")
+                .takes_value(true)
+                .default_value("single"),
+        )
+        .arg(
             Arg::with_name("type")
                 .short('t')
                 .help("Sets the contract type to create")
@@ -29,6 +36,7 @@ fn main() {
                 .takes_value(true)
                 .help("Sets the project name"),
         )
+        .arg(Arg::with_name("openzeppelin").action(clap::ArgAction::SetTrue))
         .arg(
             Arg::with_name("config")
                 .short('c')
@@ -47,12 +55,13 @@ fn main() {
     let contract_type = matches.value_of("type").unwrap().to_lowercase();
     let project_name = matches.value_of("project_name").unwrap();
     let filename = matches.value_of("filename").unwrap();
+    let openzeppelin = matches.contains_id("openzeppelin");
 
     match matches.value_of("type").unwrap() {
         "node" => check_for_node(),
-        "erc20" => contracts::erc20(&contract_type, project_name, filename),
-        "erc721" => contracts::erc721(),
-        "Custom" => contracts::custom(),
+        "single" => contracts::contract(&contract_type, project_name, filename, openzeppelin),
+        // "multiple" => contracts::erc721(),
+        // "Custom" => contracts::custom(),
         _ => println!("Don't be crazy!"),
     }
 }
