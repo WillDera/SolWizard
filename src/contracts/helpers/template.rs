@@ -94,9 +94,6 @@ contract GameItems is ERC1155 {
         });
     //  render the template without a closing semicolon -> this would return a string to match the function's return type.
     handlebars
-        .render(
-            "erc20",
-            &json!({"openzeppelin": openzeppelin, "type": contract_type}),
-        )
+        .render("erc20", &json!({ "openzeppelin": openzeppelin }))
         .unwrap()
 }
