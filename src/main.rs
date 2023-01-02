@@ -14,6 +14,7 @@ fn main() {
         .arg(
             Arg::with_name("file_count")
                 .short('n')
+                .long("file count")
                 .help("Number of files to be generated")
                 .takes_value(true)
                 .default_value("single"),
@@ -21,30 +22,31 @@ fn main() {
         .arg(
             Arg::with_name("type")
                 .short('t')
+                .long("contract type")
                 .help("Sets the contract type to create")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("filename")
                 .short('f')
+                .long("filename")
                 .help("Sets the contract filename i.e. <filename>.sol")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("project_name")
                 .short('p')
+                .long("project name")
                 .takes_value(true)
                 .help("Sets the project name"),
         )
-        .arg(Arg::with_name("openzeppelin").action(clap::ArgAction::SetTrue))
         .arg(
-            Arg::with_name("config")
-                .short('c')
-                .long("config")
-                .value_name("FILE")
-                .takes_value(true)
-                .help("Sets a custom config file")
-                .takes_value(true),
+            Arg::with_name("openzeppelin")
+                .short('o')
+                .long("openzeppelin")
+                .help("Use openzeppelin standard and imports")
+                .required(false)
+                .takes_value(false),
         )
         .get_matches();
 
