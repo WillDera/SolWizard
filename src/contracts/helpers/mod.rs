@@ -6,10 +6,10 @@ use std::{env, fs};
 mod template;
 
 #[cfg(windows)]
-pub const NPM: &'static str = "yarn.cmd";
+pub const YARN: &'static str = "yarn.cmd";
 
 #[cfg(not(windows))]
-pub const NPM: &'static str = "npm";
+pub const YARN: &'static str = "yarn";
 
 /**
 * 1. Change current working directory to contracts/
@@ -62,7 +62,7 @@ pub fn install_dependencies() -> std::io::Result<()> {
     for line in reader.lines() {
         let line = line.expect("Failed to read line.");
 
-        Command::new(NPM)
+        Command::new(YARN)
             .arg("add")
             .arg("-D")
             .arg(line)
