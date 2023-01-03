@@ -6,7 +6,7 @@ use std::{env, fs};
 mod template;
 
 #[cfg(windows)]
-pub const NPM: &'static str = "npm.cmd";
+pub const NPM: &'static str = "yarn.cmd";
 
 #[cfg(not(windows))]
 pub const NPM: &'static str = "npm";
@@ -63,8 +63,11 @@ pub fn install_dependencies() -> std::io::Result<()> {
         let line = line.expect("Failed to read line.");
 
         Command::new(NPM)
-            .args(["install", "--silent", "--no-progress", "--save-dev"])
+            .arg("add")
             .arg(line)
+            .arg("--silent")
+            .arg("--no-progress")
+            .arg("--save-dev")
             .status()
             .expect("An error occured while installing dependency: {line}");
 
