@@ -64,10 +64,10 @@ pub fn install_dependencies() -> std::io::Result<()> {
 
         Command::new(NPM)
             .arg("add")
+            .arg("-D")
             .arg(line)
             .arg("--silent")
             .arg("--no-progress")
-            .arg("--save-dev")
             .status()
             .expect("An error occured while installing dependency: {line}");
 
