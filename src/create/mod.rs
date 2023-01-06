@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::process::Command;
 mod helpers;
 
@@ -10,11 +11,13 @@ mod helpers;
  * */
 
 pub fn contract(contract_type: &str, project_name: &str, filename: &str, openzeppelin: bool) {
-    helpers::mkdir_cd(project_name).unwrap();
+    if !Path::new("hardhat.config.json").exists() {
+        helpers::mkdir_cd(project_name).unwrap();
 
-    Command::new("hardhat.cmd")
-        .status()
-        .expect("node failed to fetch version");
+        Command::new("hardhat.cmd")
+            .status()
+            .expect("node failed to fetch version");
+    }
 
     // helpers::install_dependencies().unwrap();
 
