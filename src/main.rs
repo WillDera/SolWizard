@@ -1,6 +1,6 @@
 extern crate clap;
-use clap::{App, Arg};
-mod contracts;
+use clap::{App, Arg, ArgAction};
+mod create;
 
 fn check_for_node() {
     println!("Hello from node");
@@ -23,15 +23,21 @@ fn main() {
             Arg::with_name("type")
                 .short('t')
                 .long("contract type")
-                .help("Sets the contract type to create")
-                .takes_value(true),
+                .help("Sets the contract type(s) to create")
+                .takes_value(true)
+                .multiple(true)
+                .required(true)
+                .action(ArgAction::Append),
         )
         .arg(
             Arg::with_name("filename")
                 .short('f')
                 .long("filename")
-                .help("Sets the contract filename i.e. <filename>.sol")
-                .takes_value(true),
+                .help("Sets the contract filename(s) i.e. <filename>.sol")
+                .takes_value(true)
+                .multiple(true)
+                .required(true)
+                .action(ArgAction::Append),
         )
         .arg(
             Arg::with_name("project_name")
@@ -54,17 +60,25 @@ fn main() {
     println!("{} :Hello there", matches.value_of("type").unwrap());
 
     // match
-    let contract_type = matches.value_of("type").unwrap().to_lowercase();
+    let contract_type: Vec<&str> = matches
+        .get_many::<String>("type")
+        .unwrap_or_default()
+        .map(|v| v.as_str())
+        .collect::<Vec<_>>();
     let project_name = matches.value_of("project_name").unwrap();
-    let filename = matches.value_of("filename").unwrap();
+    let filename: Vec<&str> = matches
+        .get_many::<String>("filename")
+        .unwrap_or_default()
+        .map(|v| v.as_str())
+        .collect::<Vec<_>>();
     let openzeppelin = matches.contains_id("openzeppelin");
 
     match matches.value_of("file_count").unwrap() {
         "node" => check_for_node(), // just for testing, remove later
-        "single" => contracts::contract(&contract_type, project_name, filename, openzeppelin),
+        "single" => create::contract(contract_type[0], project_name, filename[0], openzeppelin),
 
         // TODO: multiple should take number of files, filenames and filetypes (contract type) to be generated
-        // "multiple" => contracts::contracts(number_of_files, project_name, filenames, openzeppelin),
+        "multiple" => create::contracts(contract_type, project_name, filename, openzeppelin),
         // "Custom" => contracts::custom(),
         _ => println!("Don't be crazy!"),
     }
