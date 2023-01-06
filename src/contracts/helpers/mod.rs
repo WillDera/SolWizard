@@ -1,6 +1,7 @@
 use indicatif::ProgressBar;
 use std::fs::{copy, File};
 use std::io::{BufRead, BufReader, Write};
+use std::path::Path;
 use std::process::Command;
 use std::{env, fs};
 mod template;
@@ -40,10 +41,29 @@ pub fn change_dir_and_make_file(
 * @param project: refers to the project directory name
 **/
 pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
+    let dest_path = Path::new(project).display().to_string();
     fs::create_dir_all(project)?;
 
-    copy("./src/contracts/helpers/install.txt", "./Test/install.txt")?;
+    copy(
+        "./src/contracts/helpers/install.txt",
+        &format!("./{}/install.txt", &dest_path),
+    )?;
     env::set_current_dir(&project).unwrap();
+
+    Command::new(YARN)
+        .arg("init")
+        .arg("-y")
+        .status()
+        .expect("Couldnt initialize yarn project");
+
+    Command::new(YARN)
+        .arg("add")
+        .arg("-D")
+        .arg("hardhat")
+        .arg("--silent")
+        .arg("--no-progress")
+        .status()
+        .expect("An error occured while installing dependency: hardhat");
 
     Ok(())
 }
@@ -55,10 +75,8 @@ pub fn install_dependencies() -> std::io::Result<()> {
     let dependencies = File::open("./install.txt").unwrap();
     let reader = BufReader::new(dependencies);
 
-    // TODO: Dynamically get the number of packages in the install.txt file and pass it into ProgressBar::new()
     let bar = ProgressBar::new(5);
 
-    // ? Try parallel iterators from rayon here
     for line in reader.lines() {
         let line = line.expect("Failed to read line.");
 
@@ -68,6 +86,7 @@ pub fn install_dependencies() -> std::io::Result<()> {
             .arg(line)
             .arg("--silent")
             .arg("--no-progress")
+            .arg("--non-interactive")
             .status()
             .expect("An error occured while installing dependency: {line}");
 
