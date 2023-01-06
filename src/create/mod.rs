@@ -12,21 +12,20 @@ mod helpers;
 pub fn contract(contract_type: &str, project_name: &str, filename: &str, openzeppelin: bool) {
     helpers::mkdir_cd(project_name).unwrap();
 
-    Command::new("npx.cmd")
-        .arg("hardhat")
+    Command::new("hardhat.cmd")
         .status()
         .expect("node failed to fetch version");
 
-    helpers::install_dependencies().unwrap();
+    // helpers::install_dependencies().unwrap();
 
-    helpers::change_dir_and_make_file(filename, openzeppelin, contract_type).unwrap();
+    // helpers::change_dir_and_make_file(filename, openzeppelin, contract_type).unwrap();
 }
 
-// pub fn contracts(
-//     number_of_files: &i32,
-//     project_name: &str,
-//     filenames: Vec<&str>,
-//     openzeppelin: bool,
-// ) {
-//     (())
-// }
+pub fn contracts(
+    contract_types: Vec<&str>,
+    project_name: &str,
+    filenames: Vec<&str>,
+    openzeppelin: bool,
+) {
+    println!("{:?}", filenames);
+}
