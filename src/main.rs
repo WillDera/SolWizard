@@ -12,15 +12,15 @@ fn main() {
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
-            Arg::with_name("file_count")
-                .short('n')
-                .long("file count")
-                .help("Number of files to be generated")
+            Arg::with_name("contract_category")
+                .short('c')
+                .long("contract category")
+                .help("The category of a contract. eg. Normal or Custom")
                 .takes_value(true)
-                .default_value("single"),
+                .default_value("normal"),
         )
         .arg(
-            Arg::with_name("type")
+            Arg::with_name("contract_type")
                 .short('t')
                 .long("contract type")
                 .help("Sets the contract type(s) to create")
@@ -57,11 +57,14 @@ fn main() {
         .get_matches();
 
     // Same as above examples...
-    println!("{} :Hello there", matches.value_of("type").unwrap());
+    println!(
+        "{} :Hello there",
+        matches.value_of("contract_type").unwrap()
+    );
 
     // match
     let contract_type: Vec<&str> = matches
-        .get_many::<String>("type")
+        .get_many::<String>("contract_type")
         .unwrap_or_default()
         .map(|v| v.as_str())
         .collect::<Vec<_>>();
@@ -73,12 +76,12 @@ fn main() {
         .collect::<Vec<_>>();
     let openzeppelin = matches.contains_id("openzeppelin");
 
-    match matches.value_of("file_count").unwrap() {
+    match matches.value_of("contract_category").unwrap() {
         "node" => check_for_node(), // just for testing, remove later
-        "single" => create::contract(contract_type[0], project_name, filename[0], openzeppelin),
+        "normal" => create::normal(contract_type, project_name, filename, openzeppelin),
 
         // TODO: multiple should take number of files, filenames and filetypes (contract type) to be generated
-        "multiple" => create::contracts(contract_type, project_name, filename, openzeppelin),
+        "custom" => create::contracts(contract_type, project_name, filename, openzeppelin),
         // "Custom" => contracts::custom(),
         _ => println!("Don't be crazy!"),
     }
