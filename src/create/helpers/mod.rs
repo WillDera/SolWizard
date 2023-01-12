@@ -1,10 +1,8 @@
-use indicatif::{ProgressBar, ProgressDrawTarget, ProgressStyle};
-use spinoff::{Color, Spinner, Spinners};
+use indicatif::{ProgressBar, ProgressStyle};
 use std::fs::{copy, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
-use std::thread::sleep;
 use std::time::Duration;
 use std::{env, fs};
 mod template;
@@ -91,25 +89,26 @@ pub fn install_dependencies() -> std::io::Result<()> {
     let dependencies = File::open("./install.txt").unwrap();
     let reader = BufReader::new(dependencies);
 
-    // let pb = ProgressBar::new(5);
+    let pb = ProgressBar::new(5);
 
-    // pb.set_style(
-    //     ProgressStyle::default_bar()
-    //         .progress_chars("##--")
-    //         .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
-    //         .expect("Invalid progress bar template"),
-    // );
-
-    let spinner = Spinner::new(Spinners::Dots, "Installing Dependencies", Color::Blue);
+    pb.set_style(
+        ProgressStyle::default_bar()
+            .progress_chars("##--")
+            .template(
+                "{spinner:.green} [{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}",
+            )
+            .expect("Invalid progress bar template"),
+    );
+    pb.enable_steady_tick(Duration::from_millis(5));
 
     let mut static_line = Box::new(String::new());
 
     for line in reader.lines() {
-        // pb.inc(1);
+        pb.inc(1);
         let line = line.expect("Failed to read line.");
         *static_line = line.to_string();
         let message = format!("Installing {}", static_line);
-        // pb.set_message(message);
+        pb.set_message(message);
 
         Command::new(YARN)
             .arg("add")
@@ -119,8 +118,7 @@ pub fn install_dependencies() -> std::io::Result<()> {
             .stderr(Stdio::null())
             .output()?;
     }
-    spinner.stop_and_persist("📜", "Task done.");
-    // pb.finish_with_message("Dependencies installed");
+    pb.finish_with_message("Dependencies installed");
 
     Ok(())
 }
