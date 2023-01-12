@@ -1,10 +1,10 @@
-use indicatif::{ProgressBar, ProgressState, ProgressStyle};
-use std::fmt;
+use indicatif::{ProgressBar, ProgressDrawTarget, ProgressStyle};
+use spinoff::{Color, Spinner, Spinners};
 use std::fs::{copy, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
-use std::thread;
+use std::thread::sleep;
 use std::time::Duration;
 use std::{env, fs};
 mod template;
@@ -91,37 +91,25 @@ pub fn install_dependencies() -> std::io::Result<()> {
     let dependencies = File::open("./install.txt").unwrap();
     let reader = BufReader::new(dependencies);
 
-    let pb = ProgressBar::new(5);
+    // let pb = ProgressBar::new(5);
 
-    pb.set_style(
-        ProgressStyle::with_template(
-            "{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] ({eta})",
-        )
-        .unwrap()
-        .with_key("eta", |state: &ProgressState, w: &mut dyn fmt::Write| {
-            write!(w, "{:.1}s", state.eta().as_secs_f64()).unwrap()
-        })
-        .progress_chars("#>-"),
-    );
+    // pb.set_style(
+    //     ProgressStyle::default_bar()
+    //         .progress_chars("##--")
+    //         .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+    //         .expect("Invalid progress bar template"),
+    // );
+
+    let spinner = Spinner::new(Spinners::Dots, "Installing Dependencies", Color::Blue);
 
     let mut static_line = Box::new(String::new());
 
-    // let spinner_handle = thread::spawn(move || while {
-    //     let spinner_chars = vec!["-", "\\", "|", "/"];
-    //     let mut i = 0;
-    //     loop {
-    //         print!("{} Installing...  ", spinner_chars[i]);
-    //         stdout().flush().unwrap();
-    //         thread::sleep(Duration::from_millis(100));
-    //         i = (i + 1) % spinner_chars.len();
-    //     }
-    // });
-
     for line in reader.lines() {
+        // pb.inc(1);
         let line = line.expect("Failed to read line.");
         *static_line = line.to_string();
         let message = format!("Installing {}", static_line);
-        pb.set_message(message);
+        // pb.set_message(message);
 
         Command::new(YARN)
             .arg("add")
@@ -130,11 +118,9 @@ pub fn install_dependencies() -> std::io::Result<()> {
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .output()?;
-
-        pb.inc(1);
-        thread::sleep(Duration::from_millis(1));
     }
-    pb.finish_with_message("Dependencies installed");
+    spinner.stop_and_persist("📜", "Task done.");
+    // pb.finish_with_message("Dependencies installed");
 
     Ok(())
 }
