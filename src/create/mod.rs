@@ -16,7 +16,8 @@ pub fn normal(
     filenames: Vec<&str>,
     openzeppelin: bool,
 ) {
-    if !Path::new("hardhat.config.json").exists() {
+    // if project_name is an empty string or hardhat.config.json is abscent, then execute the following step.
+    if !Path::new("hardhat.config.json").exists() || !(project_name == "") {
         helpers::mkdir_cd(project_name).unwrap();
 
         Command::new("hardhat.cmd")
@@ -24,7 +25,9 @@ pub fn normal(
             .expect("node failed to fetch version");
     }
 
-    helpers::install_dependencies().unwrap();
+    if Path::new("install.txt").exists() {
+        helpers::install_dependencies().unwrap();
+    }
 
     helpers::change_dir_and_make_file(filenames, openzeppelin, contract_types).unwrap();
 }

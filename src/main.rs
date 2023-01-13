@@ -68,7 +68,8 @@ fn main() {
         .unwrap_or_default()
         .map(|v| v.as_str())
         .collect::<Vec<_>>();
-    let project_name = matches.value_of("project_name").unwrap();
+    let project_name = matches.value_of("project_name").unwrap_or("");
+
     let filename: Vec<&str> = matches
         .get_many::<String>("filename")
         .unwrap_or_default()
@@ -76,6 +77,11 @@ fn main() {
         .collect::<Vec<_>>();
     let openzeppelin = matches.contains_id("openzeppelin");
 
+    if project_name == "" && openzeppelin {
+        println!("empty, {}", openzeppelin)
+    } else {
+        println!("Not empty")
+    };
     match matches.value_of("contract_category").unwrap() {
         "node" => check_for_node(), // just for testing, remove later
         "normal" => create::normal(contract_type, project_name, filename, openzeppelin),
