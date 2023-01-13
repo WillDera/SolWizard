@@ -25,8 +25,7 @@ This is a boostrapper built ontop of Hardhat SDK to cutdown setup time with rega
 - [x] Check for `hardhat.config.js` before running other processes.
 - [x] If config file exists, carry out solidity file creation with expected templates.
 - [x] Implement a progress bar.
-
-## Future Improvements
-
 - [x] Allow creation of more than one solidity file.
 - [x] Conditional renderer should render templates based on number of files and kinds of contract (including custom contracts)
+- [ ] create::custom should take types like "ReEntrancy Guard, Ownable, AccessControl, Governor, etc"
+- [ ] Bundle this as version 1.0

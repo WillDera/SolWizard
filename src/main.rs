@@ -2,10 +2,6 @@ extern crate clap;
 use clap::{App, Arg, ArgAction};
 mod create;
 
-fn check_for_node() {
-    println!("Hello from node");
-}
-
 fn main() {
     let matches = App::new("Smart Contract Bootstrapper")
         .version("1.0")
@@ -56,12 +52,6 @@ fn main() {
         )
         .get_matches();
 
-    // Same as above examples...
-    println!(
-        "{} :Hello there",
-        matches.value_of("contract_type").unwrap()
-    );
-
     // match
     let contract_type: Vec<&str> = matches
         .get_many::<String>("contract_type")
@@ -83,12 +73,8 @@ fn main() {
         println!("Not empty")
     };
     match matches.value_of("contract_category").unwrap() {
-        "node" => check_for_node(), // just for testing, remove later
         "normal" => create::normal(contract_type, project_name, filename, openzeppelin),
-
-        // TODO: multiple should take number of files, filenames and filetypes (contract type) to be generated
         "custom" => create::contracts(contract_type, project_name, filename, openzeppelin),
-        // "Custom" => contracts::custom(),
         _ => println!("Don't be crazy!"),
     }
 }
