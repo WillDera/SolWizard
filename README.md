@@ -23,14 +23,10 @@ This is a boostrapper built ontop of Hardhat SDK to cutdown setup time with rega
 - [x] Have one function to conditionally render a template depending on what type of contract is required.
 - [x] Use ArgAction::Append from clap to accept multiple filetypes and filenames.
 - [x] Check for `hardhat.config.js` before running other processes.
-- [ ] If config file exists, carry out solidity file creation with expected templates.
+- [x] If config file exists, carry out solidity file creation with expected templates.
 - [x] Implement a progress bar.
 
 ## Future Improvements
 
 - [x] Allow creation of more than one solidity file.
 - [x] Conditional renderer should render templates based on number of files and kinds of contract (including custom contracts)
-
-[![Build Status](https://example.org/badge.svg)](https://example.org/link-to-ci)
-
-<!-- cargo-rdme -->
