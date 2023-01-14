@@ -67,11 +67,6 @@ fn main() {
         .collect::<Vec<_>>();
     let openzeppelin = matches.contains_id("openzeppelin");
 
-    if project_name == "" && openzeppelin {
-        println!("empty, {}", openzeppelin)
-    } else {
-        println!("Not empty")
-    };
     match matches.value_of("contract_category").unwrap() {
         "normal" => create::normal(contract_type, project_name, filename, openzeppelin),
         "custom" => create::contracts(contract_type, project_name, filename, openzeppelin),

@@ -8,10 +8,10 @@ use std::{env, fs};
 mod template;
 
 #[cfg(windows)]
-pub const YARN: &'static str = "yarn.cmd";
+pub const YARN: &str = "yarn.cmd";
 
 #[cfg(not(windows))]
-pub const YARN: &'static str = "yarn";
+pub const YARN: &str = "yarn";
 
 /**
 * 1. Change current working directory to contracts/
@@ -54,7 +54,7 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
 
     copy(
         "./src/create/helpers/install.txt",
-        &format!("./{}/install.txt", &dest_path),
+        format!("./{}/install.txt", &dest_path),
     )?;
 
     match env::set_current_dir(&dest_path) {
@@ -101,7 +101,7 @@ pub fn install_dependencies() -> std::io::Result<()> {
     );
     pb.enable_steady_tick(Duration::from_millis(5));
 
-    let mut static_line = Box::new(String::new());
+    let mut static_line = Box::<std::string::String>::default();
 
     for line in reader.lines() {
         pb.inc(1);

@@ -17,7 +17,7 @@ pub fn normal(
     openzeppelin: bool,
 ) {
     // if project_name is an empty string or hardhat.config.json is abscent, then execute the following step.
-    if !Path::new("hardhat.config.json").exists() || !(project_name == "") {
+    if !Path::new("hardhat.config.json").exists() || !project_name.is_empty() {
         helpers::mkdir_cd(project_name).unwrap();
 
         Command::new("hardhat.cmd")
