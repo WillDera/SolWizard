@@ -2,6 +2,12 @@ use std::path::Path;
 use std::process::Command;
 mod helpers;
 
+#[cfg(windows)]
+pub const HARDHAT: &str = "hardhat.cmd";
+
+#[cfg(not(windows))]
+pub const HARDHAT: &str = "hardhat";
+
 /**
  * Triggers Normal contract creation
  * @param contract_type: contract type to be created i.e ERC20 (might be redundant)
@@ -20,9 +26,9 @@ pub fn normal(
     if !Path::new("hardhat.config.json").exists() || !project_name.is_empty() {
         helpers::mkdir_cd(project_name).unwrap();
 
-        Command::new("hardhat.cmd")
+        Command::new(HARDHAT)
             .status()
-            .expect("node failed to fetch version");
+            .expect("Filed to start hardhat!");
     }
 
     if Path::new("install.txt").exists() {
@@ -48,9 +54,9 @@ pub fn contracts(
     if !Path::new("hardhat.config.json").exists() {
         helpers::mkdir_cd(project_name).unwrap();
 
-        Command::new("hardhat.cmd")
+        Command::new(HARDHAT)
             .status()
-            .expect("node failed to fetch version");
+            .expect("Failed to start hardhat!");
     }
 
     helpers::install_dependencies().unwrap();
