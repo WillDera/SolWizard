@@ -62,8 +62,10 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
             Command::new(YARN)
                 .arg("init")
                 .arg("-y")
-                .status()
-                .expect("Couldnt initialize yarn project");
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .output()
+                .expect("Failed to initialize yarn project");
 
             Command::new(YARN)
                 .arg("add")
@@ -71,7 +73,8 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
                 .arg("hardhat")
                 .stdout(Stdio::null())
                 .stderr(Stdio::null())
-                .output()?;
+                .output()
+                .expect("Failed to start hardhat");
         }
         Err(e) => {
             println!("Error changing current directory: {}", e);

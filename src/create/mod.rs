@@ -31,8 +31,15 @@ pub fn normal(
             .expect("Filed to start hardhat!");
     }
 
-    if Path::new("install.txt").exists() {
+    if Path::new("install.txt").exists() && !Path::new("package.json").exists() {
         helpers::install_dependencies().unwrap();
+    }
+
+    // If OS is windows, go ahead and install dependencies from the install.txt file
+    // If OS is not windows, delete the install.txt file which was copied in the previous stage above
+    match std::env::consts::OS {
+        "windows" => helpers::install_dependencies().unwrap(),
+        _ => std::fs::remove_file("install.txt").unwrap(),
     }
 
     helpers::change_dir_and_make_file(filenames, openzeppelin, contract_types).unwrap();
