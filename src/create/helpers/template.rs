@@ -1,7 +1,7 @@
 use serde_json::json;
 use std::error::Error;
 
-use handlebars::Handlebars;
+use handlebars::{handlebars_helper, Handlebars};
 
 /**
 * Generate erc20 snippet too be added to custom contract file.
@@ -10,8 +10,19 @@ use handlebars::Handlebars;
 * @param openzeppelin: Bool representing if openzeppelin imports should be added
 * @param contract_type: string representing the type of contract, eg. ERC20, ERC721, Custom, etc.
 **/
-pub fn generate_snippet(openzeppelin: bool, contract_type: &str) -> String {
+pub fn generate_snippet(
+    openzeppelin: bool,
+    isPauseable: bool,
+    isOwnable: bool,
+    isREGuarded: bool,
+    contract_type: &str,
+    contract_name: &str,
+) -> String {
     let mut handlebars = Handlebars::new();
+
+    handlebars_helper!(isDefined: |name: String| !name.is_empty());
+
+    handlebars.register_helper("isDefined", Box::new(isDefined));
 
     let erc20_template = r#"
 // SPDX-License-Identifier: MIT
@@ -76,10 +87,27 @@ contract GameItems is ERC1155 {
 }
 "#;
 
+    let custom_template = r#"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+{{#if isPauseable}}import "@openzeppelin/contracts/security/Pausable.sol";{{/if}}
+{{#if isOwnable}}import "@openzeppelin/contracts/access/Ownable.sol";{{/if}}
+{{#if isREGuarded}}import "@openzeppelin/contracts/security/ReentrancyGuard.sol";{{/if}}
+
+contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}MyContract{{/if}}
+{{#if initializable}}Initializable{{/if}},
+{{#if pausable_upgradeable}}PausableUpgradeable{{/if}},
+{{#if ownable_upgradeable}}OwnableUpgradeable{{/if}} {
+    do something
+}
+"#;
+
     let template = match contract_type {
         "erc20" => erc20_template,
         "erc721" => erc721_template,
         "erc1155" => erc1155_template,
+        "custom" => custom_template,
         _ => return "Invalid contract type".to_string(),
     };
 
@@ -94,6 +122,31 @@ contract GameItems is ERC1155 {
         });
     //  render the template without a closing semicolon -> this would return a string to match the function's return type.
     handlebars
-        .render("erc20", &json!({ "openzeppelin": openzeppelin }))
+        .render(
+            "erc20",
+            &json!({ "openzeppelin": openzeppelin, "isPauseable":isPauseable, "isOwnable":isOwnable, "isREGuarded":isREGuarded }),
+        )
         .unwrap()
 }
+
+/*  use handlebars::Handlebars;
+
+let mut handlebars = Handlebars::new();
+
+handlebars.register_template_string("my_template", "contract MyContract is
+{{#if initializable}}Initializable{{/if}},
+{{#if pausable_upgradeable}}PausableUpgradeable{{/if}},
+{{#if ownable_upgradeable}}OwnableUpgradeable{{/if}} {
+    do something
+}").unwrap();
+
+let data = json!({
+    "initializable": true,
+    "pausable_upgradeable": false,
+    "ownable_upgradeable": true
+});
+
+let rendered = handlebars.render("my_template", &data).unwrap();
+
+*/
+println!("{}", rendered);
