@@ -21,6 +21,9 @@ pub fn normal(
     project_name: &str,
     filenames: Vec<&str>,
     openzeppelin: bool,
+    isPauseable: bool,
+    isOwnable: bool,
+    isREGuarded: bool,
 ) {
     // if project_name is an empty string or hardhat.config.json is abscent, then execute the following step.
     if !Path::new("hardhat.config.json").exists() || !project_name.is_empty() {
@@ -42,7 +45,15 @@ pub fn normal(
         _ => std::fs::remove_file("install.txt").unwrap(),
     }
 
-    helpers::change_dir_and_make_file(filenames, openzeppelin, contract_types).unwrap();
+    helpers::change_dir_and_make_file(
+        filenames,
+        openzeppelin,
+        isPauseable,
+        isOwnable,
+        isREGuarded,
+        contract_types,
+    )
+    .unwrap();
 }
 
 /**
@@ -57,6 +68,9 @@ pub fn contracts(
     project_name: &str,
     filenames: Vec<&str>,
     openzeppelin: bool,
+    isPauseable: bool,
+    isOwnable: bool,
+    isREGuarded: bool,
 ) {
     if !Path::new("hardhat.config.json").exists() {
         helpers::mkdir_cd(project_name).unwrap();
@@ -66,7 +80,16 @@ pub fn contracts(
             .expect("Failed to start hardhat!");
     }
 
+    let foo = String::new();
     helpers::install_dependencies().unwrap();
 
-    helpers::change_dir_and_make_file(filenames, openzeppelin, contract_types).unwrap();
+    helpers::change_dir_and_make_file(
+        filenames,
+        openzeppelin,
+        isPauseable,
+        isOwnable,
+        isREGuarded,
+        contract_types,
+    )
+    .unwrap();
 }

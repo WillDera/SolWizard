@@ -83,7 +83,7 @@ fn main() {
         .map(|v| v.as_str())
         .collect::<Vec<_>>();
 
-    let filename: Vec<&str> = matches
+    let filenames: Vec<&str> = matches
         .get_many::<String>("filename")
         .unwrap_or_default()
         .map(|v| v.as_str())
@@ -95,11 +95,16 @@ fn main() {
     let isOwnable = matches.contains_id("isOwnable");
     let isREGuarded = matches.contains_id("isREGuarded");
 
+    assert!(
+        contract_type.len() == 1 || contract_type.len() == filenames.len(),
+        "🚫 Must have 1 contract type OR same number of contract types as filenames provided!"
+    );
+
     match matches.value_of("contract_category").unwrap() {
         "normal" => create::normal(
             contract_type,
             project_name,
-            filename,
+            filenames,
             openzeppelin,
             isPauseable,
             isOwnable,
@@ -108,7 +113,7 @@ fn main() {
         "custom" => create::contracts(
             contract_type,
             project_name,
-            filename,
+            filenames,
             openzeppelin,
             isPauseable,
             isOwnable,
