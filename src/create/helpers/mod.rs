@@ -25,15 +25,37 @@ pub const YARN: &str = "yarn";
 pub fn change_dir_and_make_file(
     filenames: Vec<&str>,
     openzeppelin: bool,
+    isPauseable: bool,
+    isOwnable: bool,
+    isREGuarded: bool,
     contract_types: Vec<&str>,
 ) -> std::io::Result<()> {
     env::set_current_dir("contracts").unwrap();
 
+    let contract_names: Vec<&str> = filenames
+        .into_iter()
+        .map(|f| f.split(".").next().unwrap())
+        .collect();
+
     for x in 0..filenames.len() {
         let snippet = if contract_types.len() == 1 {
-            template::generate_snippet(openzeppelin, contract_types[0])
+            template::generate_snippet(
+                openzeppelin,
+                isPauseable,
+                isOwnable,
+                isREGuarded,
+                contract_types[0],
+                contract_names[x],
+            )
         } else {
-            template::generate_snippet(openzeppelin, contract_types[x])
+            template::generate_snippet(
+                openzeppelin,
+                isPauseable,
+                isOwnable,
+                isREGuarded,
+                contract_types[x],
+                contract_names[x],
+            )
         };
 
         let mut file = File::create(filenames[x]).unwrap();
