@@ -4,7 +4,7 @@ mod create;
 
 fn main() {
     let matches = App::new("Smart Contract Bootstrapper")
-        .version("1.0")
+        .version("1.0.0")
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
@@ -44,9 +44,33 @@ fn main() {
         )
         .arg(
             Arg::with_name("openzeppelin")
-                .short('o')
+                .short('z')
                 .long("openzeppelin")
                 .help("Use openzeppelin standard and imports")
+                .required(false)
+                .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("isPauseable")
+                .short('p')
+                .long("Pauseable")
+                .help("Make contract Pauseable")
+                .required(false)
+                .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("isOwnable")
+                .short('o')
+                .long("Pauseable")
+                .help("Make contract Ownable")
+                .required(false)
+                .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("isREGuarded")
+                .short('r')
+                .long("ReEntrancy Guard")
+                .help("Make contract NonReEntrant")
                 .required(false)
                 .takes_value(false),
         )
@@ -58,18 +82,38 @@ fn main() {
         .unwrap_or_default()
         .map(|v| v.as_str())
         .collect::<Vec<_>>();
-    let project_name = matches.value_of("project_name").unwrap_or("");
 
     let filename: Vec<&str> = matches
         .get_many::<String>("filename")
         .unwrap_or_default()
         .map(|v| v.as_str())
         .collect::<Vec<_>>();
+
+    let project_name = matches.value_of("project_name").unwrap_or("");
     let openzeppelin = matches.contains_id("openzeppelin");
+    let isPauseable = matches.contains_id("isPauseable");
+    let isOwnable = matches.contains_id("isOwnable");
+    let isREGuarded = matches.contains_id("isREGuarded");
 
     match matches.value_of("contract_category").unwrap() {
-        "normal" => create::normal(contract_type, project_name, filename, openzeppelin),
-        "custom" => create::contracts(contract_type, project_name, filename, openzeppelin),
+        "normal" => create::normal(
+            contract_type,
+            project_name,
+            filename,
+            openzeppelin,
+            isPauseable,
+            isOwnable,
+            isREGuarded,
+        ),
+        "custom" => create::contracts(
+            contract_type,
+            project_name,
+            filename,
+            openzeppelin,
+            isPauseable,
+            isOwnable,
+            isREGuarded,
+        ),
         _ => println!("Don't be crazy!"),
     }
 }
