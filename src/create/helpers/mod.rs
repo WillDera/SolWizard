@@ -74,6 +74,7 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
     let dest_path = Path::new(project).display().to_string();
     fs::create_dir_all(&dest_path)?;
 
+    #[cfg(windows)]
     copy(
         "./src/create/helpers/install.txt",
         format!("./{}/install.txt", &dest_path),

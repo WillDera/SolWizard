@@ -34,7 +34,8 @@ pub fn normal(
             .expect("Filed to start hardhat!");
     }
 
-    if Path::new("install.txt").exists() && !Path::new("package.json").exists() {
+    #[cfg(windows)]
+    if Path::new("install.txt").exists() {
         helpers::install_dependencies().unwrap();
     }
 
