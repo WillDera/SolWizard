@@ -14,58 +14,6 @@ pub const YARN: &str = "yarn.cmd";
 pub const YARN: &str = "yarn";
 
 /**
-* 1. Change current working directory to contracts/
-* 2. Fetch contract snippet from generate_snippet function
-* 3. Create file with provided filename and write the snippet from 2, into the file.
-*
-* @param filename: name of solidity file
-* @param openzeppelin: if openzeppelin imports should be included
-* @param contract_type: type of contract being created
-**/
-pub fn change_dir_and_make_file(
-    filenames: Vec<&str>,
-    openzeppelin: bool,
-    isPauseable: bool,
-    isOwnable: bool,
-    isREGuarded: bool,
-    contract_types: Vec<&str>,
-) -> std::io::Result<()> {
-    env::set_current_dir("contracts").unwrap();
-
-    let contract_names: Vec<&str> = filenames
-        .into_iter()
-        .map(|f| f.split(".").next().unwrap())
-        .collect();
-
-    for x in 0..filenames.len() {
-        let snippet = if contract_types.len() == 1 {
-            template::generate_snippet(
-                openzeppelin,
-                isPauseable,
-                isOwnable,
-                isREGuarded,
-                contract_types[0],
-                contract_names[x],
-            )
-        } else {
-            template::generate_snippet(
-                openzeppelin,
-                isPauseable,
-                isOwnable,
-                isREGuarded,
-                contract_types[x],
-                contract_names[x],
-            )
-        };
-
-        let mut file = File::create(filenames[x]).unwrap();
-        file.write_all(snippet.as_bytes()).unwrap();
-    }
-
-    Ok(())
-}
-
-/**
 * Creates a new folder for the hardhat project and switch to it as the cwd.
 *
 * @param project: refers to the project directory name
@@ -109,17 +57,71 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
 }
 
 /**
+* 1. Change current working directory to contracts/
+* 2. Fetch contract snippet from generate_snippet function
+* 3. Create file with provided filename and write the snippet from 2, into the file.
+*
+* @param filename: name of solidity file
+* @param openzeppelin: if openzeppelin imports should be included
+* @param contract_type: type of contract being created
+**/
+pub fn change_dir_and_make_file(
+    filenames: Vec<&str>,
+    openzeppelin: bool,
+    is_pauseable: bool,
+    is_ownable: bool,
+    is_reguarded: bool,
+    contract_types: Vec<&str>,
+) -> std::io::Result<()> {
+    env::set_current_dir("contracts").unwrap();
+
+    let contract_names: Vec<&str> = filenames
+        .clone()
+        .into_iter()
+        .map(|f| f.split('.').next().unwrap())
+        .collect();
+
+    for x in 0..filenames.len() {
+        let snippet = if contract_types.len() == 1 {
+            template::generate_snippet(
+                openzeppelin,
+                is_pauseable,
+                is_ownable,
+                is_reguarded,
+                contract_types[0],
+                contract_names[x],
+            )
+        } else {
+            template::generate_snippet(
+                openzeppelin,
+                is_pauseable,
+                is_ownable,
+                is_reguarded,
+                contract_types[x],
+                contract_names[x],
+            )
+        };
+
+        let mut file = File::create(filenames[x]).unwrap();
+        file.write_all(snippet.as_bytes()).unwrap();
+    }
+
+    Ok(())
+}
+
+/**
 * Installs all dependencies listed in "install.txt"
 **/
 pub fn install_dependencies() -> std::io::Result<()> {
     let dependencies = File::open("./install.txt").unwrap();
-    let reader = BufReader::new(dependencies);
+    let reader = BufReader::new(&dependencies);
+    let lines: Vec<String> = reader.lines().map(|line| line.unwrap()).collect();
 
-    let pb = ProgressBar::new(5);
+    let pb = ProgressBar::new(lines.len() as u64);
 
     pb.set_style(
         ProgressStyle::default_bar()
-            .progress_chars("##--")
+            .progress_chars("##>-")
             .template(
                 "{spinner:.green} [{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}",
             )
@@ -129,9 +131,9 @@ pub fn install_dependencies() -> std::io::Result<()> {
 
     let mut static_line = Box::<std::string::String>::default();
 
-    for line in reader.lines() {
+    for line in lines {
         pb.inc(1);
-        let line = line.expect("Failed to read line.");
+
         *static_line = line.to_string();
         let message = format!("Installing {}", static_line);
         pb.set_message(message);
@@ -145,6 +147,8 @@ pub fn install_dependencies() -> std::io::Result<()> {
             .output()?;
     }
     pb.finish_with_message("Dependencies installed");
+
+    // std::fs::remove_file("./install.txt").unwrap();
 
     Ok(())
 }
