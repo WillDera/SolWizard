@@ -12,9 +12,9 @@ use handlebars::{handlebars_helper, Handlebars};
 **/
 pub fn generate_snippet(
     openzeppelin: bool,
-    isPauseable: bool,
-    isOwnable: bool,
-    isREGuarded: bool,
+    is_pauseable: bool,
+    is_ownable: bool,
+    is_reguarded: bool,
     contract_type: &str,
     contract_name: &str,
 ) -> String {
@@ -30,11 +30,15 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract TokenName is ERC20 {
+contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}MyContract{{/if}} is ERC20 {
+    {{#if (isDefined contract_name)}}
+    constructor(uint256 initialSupply) ERC20("{{contract_name}}", "{{contract_name}}") {
+    {{else}}
     constructor(uint256 initialSupply) ERC20("GOLD", "GLD") {
         _mint(msg.sender, initialSupply);
     }
 }
+{{/if}} 
 "#;
 
     let erc721_template = r#"
@@ -44,10 +48,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract GameItem is ERC721URIStorage {
+contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}GameItem{{/if}} is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    {{#if (isDefined contract_name)}}
+    constructor() ERC721("{{contract_name}}", "{{contract_name}}") {}
+    {{else}}
     constructor() ERC721("GameItem", "ITM") {}
 
     function awardItem(address player, string memory tokenURI)
@@ -70,7 +77,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-contract GameItems is ERC1155 {
+contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}GameItems{{/if}} is ERC1155 {
     uint256 public constant GOLD = 0;
     uint256 public constant SILVER = 1;
     uint256 public constant THORS_HAMMER = 2;
@@ -99,7 +106,7 @@ contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}MyContract{{/
 {{#if initializable}}Initializable{{/if}},
 {{#if pausable_upgradeable}}PausableUpgradeable{{/if}},
 {{#if ownable_upgradeable}}OwnableUpgradeable{{/if}} {
-    do something
+    //do something
 }
 "#;
 
@@ -124,7 +131,7 @@ contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}MyContract{{/
     handlebars
         .render(
             "erc20",
-            &json!({ "openzeppelin": openzeppelin, "isPauseable":isPauseable, "isOwnable":isOwnable, "isREGuarded":isREGuarded }),
+            &json!({ "openzeppelin": openzeppelin, "isPauseable":is_pauseable, "isOwnable":is_ownable, "isREGuarded":is_reguarded, "contract_name": contract_name }),
         )
         .unwrap()
 }
@@ -148,5 +155,5 @@ let data = json!({
 
 let rendered = handlebars.render("my_template", &data).unwrap();
 
-*/
 println!("{}", rendered);
+*/
