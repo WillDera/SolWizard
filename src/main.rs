@@ -52,7 +52,6 @@ fn main() {
         )
         .arg(
             Arg::with_name("isPauseable")
-                .short('p')
                 .long("Pauseable")
                 .help("Make contract Pauseable")
                 .required(false)
@@ -60,16 +59,14 @@ fn main() {
         )
         .arg(
             Arg::with_name("isOwnable")
-                .short('o')
-                .long("Pauseable")
+                .long("Ownable")
                 .help("Make contract Ownable")
                 .required(false)
                 .takes_value(false),
         )
         .arg(
             Arg::with_name("isREGuarded")
-                .short('r')
-                .long("ReEntrancy Guard")
+                .long("ReEGuard")
                 .help("Make contract NonReEntrant")
                 .required(false)
                 .takes_value(false),
@@ -91,9 +88,9 @@ fn main() {
 
     let project_name = matches.value_of("project_name").unwrap_or("");
     let openzeppelin = matches.contains_id("openzeppelin");
-    let isPauseable = matches.contains_id("isPauseable");
-    let isOwnable = matches.contains_id("isOwnable");
-    let isREGuarded = matches.contains_id("isREGuarded");
+    let is_pauseable = matches.contains_id("isPauseable");
+    let is_ownable = matches.contains_id("isOwnable");
+    let is_reguarded = matches.contains_id("isREGuarded");
 
     assert!(
         contract_type.len() == 1 || contract_type.len() == filenames.len(),
@@ -106,18 +103,18 @@ fn main() {
             project_name,
             filenames,
             openzeppelin,
-            isPauseable,
-            isOwnable,
-            isREGuarded,
+            is_pauseable,
+            is_ownable,
+            is_reguarded,
         ),
         "custom" => create::contracts(
             contract_type,
             project_name,
             filenames,
             openzeppelin,
-            isPauseable,
-            isOwnable,
-            isREGuarded,
+            is_pauseable,
+            is_ownable,
+            is_reguarded,
         ),
         _ => println!("Don't be crazy!"),
     }
