@@ -8,6 +8,44 @@ pub const HARDHAT: &str = "hardhat.cmd";
 #[cfg(not(windows))]
 pub const HARDHAT: &str = "hardhat";
 
+pub struct Wizard {
+    contract_types: Vec<String>,
+    project_name: String,
+    filenames: Vec<String>,
+    openzeppelin: Option<bool>,
+    is_pauseable: Option<bool>,
+    is_ownable: Option<bool>,
+    is_reguarded: Option<bool>,
+}
+
+impl Wizard {
+    pub fn create(
+        contract_types: Vec<String>,
+        project_name: String,
+        filenames: Vec<String>,
+    ) -> Wizard {
+        Wizard {
+            contract_types,
+            project_name,
+            filenames,
+            openzeppelin: None,
+            is_pauseable: None,
+            is_ownable: None,
+            is_reguarded: None,
+        }
+    }
+
+    pub fn openzeppelin(&mut self, openzeppelin: bool) -> &mut Self {
+        self.openzeppelin = Some(openzeppelin);
+        self
+    }
+
+    pub fn is_pauseable(&mut self, is_pauseable: bool) -> &mut Self {
+        self.is_pauseable = Some(is_pauseable);
+        self
+    }
+}
+
 /**
  * Triggers Normal contract creation
  * @param contract_type: contract type to be created i.e ERC20 (might be redundant)

@@ -3,6 +3,17 @@
 version = 3
 
 [[package]]
+name = "SolWizard"
+version = "1.0.0"
+dependencies = [
+ "assert_cmd",
+ "clap",
+ "handlebars",
+ "indicatif",
+ "serde_json",
+]
+
+[[package]]
 name = "assert_cmd"
 version = "2.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -417,17 +428,6 @@ dependencies = [
  "cfg-if",
  "cpufeatures",
  "digest",
-]
-
-[[package]]
-name = "smartcontract_bootstrapper"
-version = "1.0.0"
-dependencies = [
- "assert_cmd",
- "clap",
- "handlebars",
- "indicatif",
- "serde_json",
 ]
 
 [[package]]
