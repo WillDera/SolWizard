@@ -20,13 +20,14 @@ pub const YARN: &str = "yarn";
 **/
 pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
     let dest_path = Path::new(project).display().to_string();
-    fs::create_dir_all(&dest_path)?;
+    fs::create_dir_all(&dest_path).unwrap();
 
     #[cfg(windows)]
     copy(
         "./src/create/helpers/install.txt",
         format!("./{}/install.txt", &dest_path),
-    )?;
+    )
+    .unwrap();
 
     match env::set_current_dir(&dest_path) {
         Ok(()) => {
@@ -73,6 +74,11 @@ pub fn change_dir_and_make_file(
     is_reguarded: bool,
     contract_types: Vec<&str>,
 ) -> std::io::Result<()> {
+    let contracts = "contracts";
+    fs::remove_dir_all(contracts)
+        .and_then(|_| fs::create_dir(contracts))
+        .unwrap();
+
     env::set_current_dir("contracts").unwrap();
 
     let contract_names: Vec<&str> = filenames
@@ -127,13 +133,12 @@ pub fn install_dependencies() -> std::io::Result<()> {
             )
             .expect("Invalid progress bar template"),
     );
+
     pb.enable_steady_tick(Duration::from_millis(5));
 
     let mut static_line = Box::<std::string::String>::default();
 
     for line in lines {
-        pb.inc(1);
-
         *static_line = line.to_string();
         let message = format!("Installing {}", static_line);
         pb.set_message(message);
@@ -144,11 +149,14 @@ pub fn install_dependencies() -> std::io::Result<()> {
             .arg(line)
             .stdout(Stdio::null())
             .stderr(Stdio::null())
-            .output()?;
+            .output()
+            .unwrap();
+
+        pb.inc(1);
     }
     pb.finish_with_message("Dependencies installed");
 
-    // std::fs::remove_file("./install.txt").unwrap();
+    std::fs::remove_file("./install.txt").unwrap();
 
     Ok(())
 }
