@@ -1,75 +1,73 @@
 extern crate clap;
-use clap::{App, Arg, ArgAction};
+use clap::{Arg, ArgAction, Command};
 mod create;
 
 fn main() {
-    let matches = App::new("Smart Contract Bootstrapper")
+    let matches = Command::new("Solidity Wizard")
         .version("1.0.0")
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
-            Arg::with_name("contract_category")
+            Arg::new("contract_category")
                 .short('c')
                 .long("contract category")
                 .help("The category of a contract. eg. Normal or Custom")
-                .takes_value(true)
-                .default_value("normal"),
+                .default_value("normal")
+                .num_args(1)
+                .action(ArgAction::Set),
         )
         .arg(
-            Arg::with_name("contract_type")
+            Arg::new("contract_type")
                 .short('t')
                 .long("contract type")
                 .help("Sets the contract type(s) to create")
-                .takes_value(true)
-                .multiple(true)
-                .required(true)
-                .action(ArgAction::Append),
+                .action(ArgAction::Append)
+                .required(true),
         )
         .arg(
-            Arg::with_name("filename")
+            Arg::new("filename")
                 .short('f')
                 .long("filename")
                 .help("Sets the contract filename(s) i.e. <filename>.sol")
-                .takes_value(true)
-                .multiple(true)
-                .required(true)
-                .action(ArgAction::Append),
+                .num_args(1..)
+                .action(ArgAction::Set)
+                .required(true),
         )
         .arg(
-            Arg::with_name("project_name")
+            Arg::new("project_name")
                 .short('p')
                 .long("project name")
-                .takes_value(true)
+                .action(ArgAction::Set)
                 .help("Sets the project name"),
         )
         .arg(
-            Arg::with_name("openzeppelin")
+            Arg::new("openzeppelin")
                 .short('z')
                 .long("openzeppelin")
                 .help("Use openzeppelin standard and imports")
                 .required(false)
-                .takes_value(false),
+                .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::with_name("isPauseable")
+            Arg::new("isPauseable")
                 .long("Pauseable")
                 .help("Make contract Pauseable")
                 .required(false)
-                .takes_value(false),
+                .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::with_name("isOwnable")
+            Arg::new("isOwnable")
                 .long("Ownable")
                 .help("Make contract Ownable")
                 .required(false)
-                .takes_value(false),
+                .action(ArgAction::SetTrue),
         )
         .arg(
-            Arg::with_name("isREGuarded")
+            Arg::new("isREGuarded")
                 .long("ReEGuard")
                 .help("Make contract NonReEntrant")
                 .required(false)
-                .takes_value(false),
+                .action(ArgAction::SetTrue),
         )
         .get_matches();
 
@@ -86,7 +84,8 @@ fn main() {
         .map(|v| v.as_str())
         .collect::<Vec<_>>();
 
-    let project_name = matches.value_of("project_name").unwrap_or("");
+    // * You can replace contains_id with get_flag -> examples/tutorial_builder/03_01_flag_bool.rs
+    let project_name = matches.get_one::<String>("project_name").unwrap();
     let openzeppelin = matches.contains_id("openzeppelin");
     let is_pauseable = matches.contains_id("isPauseable");
     let is_ownable = matches.contains_id("isOwnable");
@@ -97,7 +96,11 @@ fn main() {
         "🚫 Must have 1 contract type OR same number of contract types as filenames provided!"
     );
 
-    match matches.value_of("contract_category").unwrap() {
+    match matches
+        .get_one::<String>("contract_category")
+        .expect("Contract category required")
+        .as_ref()
+    {
         "normal" => create::normal(
             contract_type,
             project_name,
