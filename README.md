@@ -10,7 +10,7 @@ To install SolWizard, run the following command
 
 ## Guide
 
-You can find a guid here:
+You can find examples here:
 
 -   [examples](https://github.com/solwizard/examples)
 
