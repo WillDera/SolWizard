@@ -8,7 +8,9 @@ To install SolWizard, run the following command
 
 `cargo install xxx` (not deployed yet)
 
-## Documentation
+## Guide
+
+You can find a guid here:
 
 -   [examples](https://github.com/solwizard/examples)
 

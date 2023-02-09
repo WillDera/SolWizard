@@ -26,4 +26,4 @@
 
     `solwind -t erc20 -f Test.sol -p Showcase -isREGuarded`
 
-    NB: Other available tags can be found in the help manual.
+    NB: Other available tags can be found in the [tool help](https://github.com/WillDera/SolWizard#how-to-run).
