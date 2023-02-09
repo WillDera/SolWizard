@@ -33,12 +33,14 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}MyContract{{/if}} is ERC20 {
     {{#if (isDefined contract_name)}}
     constructor(uint256 initialSupply) ERC20("{{contract_name}}", "{{contract_name}}") {
+        _mint(msg.sender, initialSupply);
+    }
     {{else}}
     constructor(uint256 initialSupply) ERC20("GOLD", "GLD") {
         _mint(msg.sender, initialSupply);
     }
+    {{/if}} 
 }
-{{/if}} 
 "#;
 
     let erc721_template = r#"
@@ -56,7 +58,7 @@ contract {{#if (isDefined contract_name)}}{{contract_name}}{{else}}GameItem{{/if
     constructor() ERC721("{{contract_name}}", "{{contract_name}}") {}
     {{else}}
     constructor() ERC721("GameItem", "ITM") {}
-
+    {{/if}}
     function awardItem(address player, string memory tokenURI)
         public
         returns (uint256)
