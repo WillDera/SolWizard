@@ -86,10 +86,10 @@ fn main() {
 
     // * You can replace contains_id with get_flag -> examples/tutorial_builder/03_01_flag_bool.rs
     let project_name = matches.get_one::<String>("project_name").unwrap();
-    let openzeppelin = matches.contains_id("openzeppelin");
-    let is_pauseable = matches.contains_id("isPauseable");
-    let is_ownable = matches.contains_id("isOwnable");
-    let is_reguarded = matches.contains_id("isREGuarded");
+    let openzeppelin = matches.get_flag("openzeppelin");
+    let is_pauseable = matches.get_flag("isPauseable");
+    let is_ownable = matches.get_flag("isOwnable");
+    let is_reguarded = matches.get_flag("isREGuarded");
 
     assert!(
         contract_type.len() == 1 || contract_type.len() == filenames.len(),
