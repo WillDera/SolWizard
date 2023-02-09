@@ -18,7 +18,7 @@ To install SolWizard, run the following command
 
     `solwizard -t erc20 -f name.sol -p Test`
 
-    - Supported contract types: [here](https://github.com/solwizard/README.md#supported_types)
+    - Supported contract types: [here](https://github.com/WillDera/SolWizard#supported-contract-types)
 
 2. Help
 
