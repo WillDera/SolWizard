@@ -12,7 +12,7 @@ To install SolWizard, run the following command
 
 You can find examples here:
 
--   [examples](https://github.com/willdera/solwizard/examples)
+-   [examples](https://github.com/willdera/solwizard/main/examples)
 
 ## How to run
 
