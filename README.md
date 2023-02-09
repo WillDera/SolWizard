@@ -29,6 +29,8 @@ You can find examples here:
 ## Coming Soon
 
 -   Creation of custom contracts.
+-   Generate files without running Hardhat.
+-   Generate empty files alongside Hardhat setup.
 
 ## Supported contract types
 
