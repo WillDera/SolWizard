@@ -4,9 +4,9 @@
 
 ## Installation
 
-To install SolWizard, run the following command
+To install SolWizard (not deployed yet), run the following command
 
-`cargo install xxx` (not deployed yet)
+    cargo install xxx
 
 ## Guide
 
@@ -16,15 +16,15 @@ You can find examples here:
 
 ## How to run
 
-1. Create a project named "Test" with an "ERC20" solidity file named "name.sol"
+1.  Create a project named "Test" with an "ERC20" solidity file named "name.sol"
 
-    `solwizard -t erc20 -f name.sol -p Test`
+        solwizard -t erc20 -f name.sol -p Test
 
-    - Supported contract types: [here](https://github.com/WillDera/SolWizard#supported-contract-types)
+    -   Supported contract types: [here](https://github.com/WillDera/SolWizard#supported-contract-types)
 
-2. Help
+2.  Help
 
-    `solwizard --help`
+        solwizard --help
 
 ## Coming Soon
 
