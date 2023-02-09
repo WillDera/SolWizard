@@ -6,7 +6,7 @@
 
 To install SolWizard, run the following command
 
-`cargo install xxx`
+`cargo install xxx` (not deployed yet)
 
 ## Documentation
 
