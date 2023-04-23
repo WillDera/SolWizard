@@ -7,7 +7,7 @@ mod create;
 
 fn main() {
     let matches = Command::new("Solidity Wizard")
-        .version("1.0.0")
+        .version("0.1.0")
         .author("Godswill E. <godswillezeoke@gmail.com>")
         .about("Does awesome things")
         .arg(
