@@ -2,7 +2,7 @@ use fancy::printcoln;
 use std::path::Path;
 use std::process::Command;
 mod helpers;
-mod util;
+pub mod util;
 /**
  * Triggers Normal contract creation
  * @param contract_type: contract type to be created i.e ERC20 (might be redundant)

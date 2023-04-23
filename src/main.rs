@@ -1,14 +1,9 @@
 extern crate clap;
+use crate::create::{custom, normal, util::NPM};
 use clap::{Arg, ArgAction, Command};
 use fancy::printcoln;
 use std::process::Command as cmd;
 mod create;
-
-#[cfg(windows)]
-pub const NPX: &str = "npx.cmd";
-
-#[cfg(not(windows))]
-pub const NPX: &str = "npx";
 
 fn main() {
     let matches = Command::new("Solidity Wizard")
@@ -100,7 +95,7 @@ fn main() {
     let is_ownable = matches.get_flag("isOwnable");
     let is_reguarded = matches.get_flag("isREGuarded");
 
-    let npx = cmd::new(crate::NPX).arg("--version").output();
+    let npx = cmd::new(NPM).arg("--version").output();
 
     match npx {
         Ok(_) => {
@@ -122,7 +117,7 @@ fn main() {
         .expect("Contract category required")
         .as_ref()
     {
-        "normal" => create::normal(
+        "normal" => normal(
             contract_type,
             project_name,
             filenames,
@@ -131,7 +126,7 @@ fn main() {
             is_ownable,
             is_reguarded,
         ),
-        "custom" => create::custom(
+        "custom" => custom(
             contract_type,
             project_name,
             filenames,
