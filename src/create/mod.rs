@@ -1,13 +1,8 @@
+use fancy::printcoln;
 use std::path::Path;
 use std::process::Command;
 mod helpers;
-
-#[cfg(windows)]
-pub const HARDHAT: &str = "hardhat.cmd";
-
-#[cfg(not(windows))]
-pub const HARDHAT: &str = "hardhat";
-
+mod util;
 /**
  * Triggers Normal contract creation
  * @param contract_type: contract type to be created i.e ERC20 (might be redundant)
@@ -29,7 +24,9 @@ pub fn normal(
     if !Path::new("hardhat.config.json").exists() || !project_name.is_empty() {
         helpers::mkdir_cd(project_name).unwrap();
 
-        Command::new(HARDHAT)
+        printcoln!("[bold|green]==> Starting Hardhat...");
+        Command::new(util::NPX)
+            .arg("hardhat")
             .status()
             .expect("Filed to start hardhat!");
     }
@@ -41,11 +38,6 @@ pub fn normal(
         helpers::install_dependencies().unwrap();
     }
 
-    // match std::env::consts::OS {
-    //     "windows" => helpers::install_dependencies().unwrap(),
-    //     _ => std::fs::remove_file("install.txt").unwrap(),
-    // }
-
     helpers::change_dir_and_make_file(
         filenames,
         openzeppelin,
@@ -55,6 +47,8 @@ pub fn normal(
         contract_types,
     )
     .unwrap();
+
+    printcoln!("[bold|green]==> Execution Complete!");
 }
 
 /**
@@ -64,32 +58,34 @@ pub fn normal(
  * @param filename: the contract file name i.e. DeraDAO.sol
  * @param openzeppelin: if openzeppelin imports should be included
  * */
-pub fn contracts(
-    contract_types: Vec<&str>,
-    project_name: &str,
-    filenames: Vec<&str>,
-    openzeppelin: bool,
-    is_pauseable: bool,
-    is_ownable: bool,
-    is_reguarded: bool,
+pub fn custom(
+    _contract_types: Vec<&str>,
+    _project_name: &str,
+    _filenames: Vec<&str>,
+    _openzeppelin: bool,
+    _is_pauseable: bool,
+    _is_ownable: bool,
+    _is_reguarded: bool,
 ) {
-    if !Path::new("hardhat.config.json").exists() {
-        helpers::mkdir_cd(project_name).unwrap();
+    // if !Path::new("hardhat.config.json").exists() {
+    //     helpers::mkdir_cd(project_name).unwrap();
 
-        Command::new(HARDHAT)
-            .status()
-            .expect("Failed to start hardhat!");
-    }
+    //     Command::new(util::NPX)
+    //         .arg("hardhat")
+    //         .status()
+    //         .expect("Failed to start hardhat!");
+    // }
 
-    helpers::install_dependencies().unwrap();
+    // helpers::install_dependencies().unwrap();
 
-    helpers::change_dir_and_make_file(
-        filenames,
-        openzeppelin,
-        is_pauseable,
-        is_ownable,
-        is_reguarded,
-        contract_types,
-    )
-    .unwrap();
+    // helpers::change_dir_and_make_file(
+    //     filenames,
+    //     openzeppelin,
+    //     is_pauseable,
+    //     is_ownable,
+    //     is_reguarded,
+    //     contract_types,
+    // )
+    // .unwrap();
+    printcoln!("[bold|yellow]==> Custom contracts in development");
 }

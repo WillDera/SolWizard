@@ -1,6 +1,6 @@
 [package]
 name = "solwizard"
-version = "1.0.0"
+version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,6 +11,7 @@ clap = { version = "4.0.15", features = ["derive"] }
 indicatif = "0.17.2"
 handlebars = "4.3.6"
 serde_json = "1.0.91"
+fancy = "0.3.1"
 
 [dev-dependencies]
 assert_cmd = "2.0.8"

@@ -1,6 +1,14 @@
 extern crate clap;
 use clap::{Arg, ArgAction, Command};
+use fancy::printcoln;
+use std::process::Command as cmd;
 mod create;
+
+#[cfg(windows)]
+pub const NPX: &str = "npx.cmd";
+
+#[cfg(not(windows))]
+pub const NPX: &str = "npx";
 
 fn main() {
     let matches = Command::new("Solidity Wizard")
@@ -38,7 +46,8 @@ fn main() {
                 .short('p')
                 .long("project name")
                 .action(ArgAction::Set)
-                .help("Sets the project name"),
+                .help("Sets the project name")
+                .required(true),
         )
         .arg(
             Arg::new("openzeppelin")
@@ -91,9 +100,21 @@ fn main() {
     let is_ownable = matches.get_flag("isOwnable");
     let is_reguarded = matches.get_flag("isREGuarded");
 
+    let npx = cmd::new(crate::NPX).arg("--version").output();
+
+    match npx {
+        Ok(_) => {
+            printcoln!("[bold|green]==> Npx Found...");
+        }
+        Err(_) => {
+            printcoln!("[bold|red]==> Npx required for Hardhat!");
+            std::process::exit(1);
+        }
+    }
+
     assert!(
         contract_type.len() == 1 || contract_type.len() == filenames.len(),
-        "🚫 Must have 1 contract type OR same number of contract types as filenames provided!"
+        "🚫 Must have atleast 1 contract type OR same number of contract types as filenames provided!"
     );
 
     match matches
@@ -110,7 +131,7 @@ fn main() {
             is_ownable,
             is_reguarded,
         ),
-        "custom" => create::contracts(
+        "custom" => create::custom(
             contract_type,
             project_name,
             filenames,

@@ -1,17 +1,13 @@
+use fancy::printcoln;
 use indicatif::{ProgressBar, ProgressStyle};
-use std::fs::{copy, File};
+use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 use std::time::Duration;
 use std::{env, fs};
 mod template;
-
-#[cfg(windows)]
-pub const YARN: &str = "yarn.cmd";
-
-#[cfg(not(windows))]
-pub const YARN: &str = "yarn";
+use crate::create::util::NPM;
 
 /**
 * Creates a new folder for the hardhat project and switch to it as the cwd.
@@ -19,6 +15,7 @@ pub const YARN: &str = "yarn";
 * @param project: refers to the project directory name
 **/
 pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
+    printcoln!("[bold|green]==> Started Folder creation!");
     let dest_path = Path::new(project).display().to_string();
     fs::create_dir_all(&dest_path).unwrap();
 
@@ -31,7 +28,7 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
 
     match env::set_current_dir(&dest_path) {
         Ok(()) => {
-            Command::new(YARN)
+            Command::new(NPM)
                 .arg("init")
                 .arg("-y")
                 .stdout(Stdio::null())
@@ -39,7 +36,7 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
                 .output()
                 .expect("Failed to initialize yarn project");
 
-            Command::new(YARN)
+            Command::new(NPM)
                 .arg("add")
                 .arg("-D")
                 .arg("hardhat")
@@ -53,6 +50,8 @@ pub fn mkdir_cd(project: &str) -> std::io::Result<()> {
             return Err(e);
         }
     }
+
+    printcoln!("[bold|green]==> Folder creation done!");
 
     Ok(())
 }
@@ -75,9 +74,15 @@ pub fn change_dir_and_make_file(
     contract_types: Vec<&str>,
 ) -> std::io::Result<()> {
     let contracts = "contracts";
-    fs::remove_dir_all(contracts)
-        .and_then(|_| fs::create_dir(contracts))
-        .unwrap();
+
+    // create contracts folder if it doesnt exist, else delete it and create a new one.
+    if !Path::new(contracts).exists() {
+        fs::create_dir(contracts).unwrap()
+    } else {
+        fs::remove_dir_all(contracts)
+            .and_then(|_| fs::create_dir(contracts))
+            .unwrap();
+    }
 
     env::set_current_dir("contracts").unwrap();
 
@@ -87,6 +92,7 @@ pub fn change_dir_and_make_file(
         .map(|f| f.split('.').next().unwrap())
         .collect();
 
+    printcoln!("[bold|green]==> Creating contract file(s)...");
     for x in 0..filenames.len() {
         let snippet = if contract_types.len() == 1 {
             template::generate_snippet(
@@ -111,6 +117,7 @@ pub fn change_dir_and_make_file(
         let mut file = File::create(filenames[x]).unwrap();
         file.write_all(snippet.as_bytes()).unwrap();
     }
+    printcoln!("[bold|green]==> Contract file(s) creation done!");
 
     Ok(())
 }
@@ -137,13 +144,13 @@ pub fn install_dependencies() -> std::io::Result<()> {
     pb.enable_steady_tick(Duration::from_millis(5));
 
     let mut static_line = Box::<std::string::String>::default();
-
+    printcoln!("[bold|green]==> Installing Dependencies...");
     for line in lines {
         *static_line = line.to_string();
         let message = format!("Installing {}", static_line);
         pb.set_message(message);
 
-        Command::new(YARN)
+        Command::new(NPM)
             .arg("add")
             .arg("-D")
             .arg(line)
@@ -154,7 +161,7 @@ pub fn install_dependencies() -> std::io::Result<()> {
 
         pb.inc(1);
     }
-    pb.finish_with_message("Dependencies installed");
+    pb.finish_with_message("Dependencies installed!");
 
     std::fs::remove_file("./install.txt").unwrap();
 
