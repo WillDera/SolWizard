@@ -2,6 +2,23 @@
 name = "solwizard"
 version = "0.1.0"
 edition = "2021"
+include = [
+    "src/**/**/*",
+    "Cargo.toml",
+    "README.md",
+    "LICENSE"
+]
+homepage = "https://github.com/WillDera/SolWizard"
+description = "Solidity bootstrapper built with Rust"
+repository = "https://github.com/WillDera/SolWizard"
+keywords = [
+    "cli",
+    "bootstrap",
+    "solidity"
+]
+categories = ["command-line-interface"]
+license = "MIT"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
